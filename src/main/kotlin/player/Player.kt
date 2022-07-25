@@ -7,7 +7,7 @@ import db.appDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ui.history.historyList
+import ui.history.updateHistoryListWithSort
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory
 import uk.co.caprica.vlcj.media.Media
 import uk.co.caprica.vlcj.player.base.MediaPlayer
@@ -31,8 +31,11 @@ object Player {
         private set
 
     suspend fun prepare(mrl: String): Boolean {
-        appDatabase.historyQueries.insertOrUpdateHistory(System.currentTimeMillis(), mrl)
-        historyList = appDatabase.historyQueries.getAllHistory().executeAsList()
+        appDatabase.historyQueries.insertOrUpdateHistory(
+            playTimestamp = System.currentTimeMillis(),
+            path = mrl
+        )
+        updateHistoryListWithSort(appDatabase.historyQueries.getAllHistory().executeAsList())
         return player.media().prepare(mrl)
     }
 

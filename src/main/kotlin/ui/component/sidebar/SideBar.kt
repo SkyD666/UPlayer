@@ -30,11 +30,9 @@ import util.showOpenFileDialog
 @Composable
 fun SideBar(bodyContentType: MutableState<BodyContentType>) {
     var expandedMenu by remember { mutableStateOf(false) }
-    Column(modifier = Modifier.width(200.dp)) {
+    Column(modifier = Modifier.width(200.dp).background(MaterialTheme.colorScheme.surface)) {
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .background(MaterialTheme.colorScheme.error)
+            modifier = Modifier.weight(1f)
         ) {
             SideBarItem(icon = Icons.Rounded.Home, title = "首页") {
                 bodyContentType.value = BodyContentType.Home
@@ -110,7 +108,10 @@ private fun MainMenu(expanded: Boolean, onDismissRequest: () -> Unit) {
                     imageVector = Icons.Outlined.InsertDriveFile,
                     contentDescription = null
                 )
-                Text("打开")
+                Text(
+                    modifier = Modifier.padding(start = 6.dp),
+                    text = "打开"
+                )
             }
         }
     }

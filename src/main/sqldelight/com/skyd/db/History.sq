@@ -1,10 +1,16 @@
 CREATE TABLE IF NOT EXISTS History (
-  playTimestamp INTEGER NOT NULL,
-  path TEXT NOT NULL PRIMARY KEY
+    path TEXT NOT NULL PRIMARY KEY,
+    playTimestamp INTEGER NOT NULL
 );
 
 getAllHistory:
 SELECT * FROM History;
 
 insertOrUpdateHistory:
-INSERT OR REPLACE INTO History(playTimestamp, path) VALUES(?, ?);
+INSERT OR REPLACE INTO History(path, playTimestamp) VALUES(?, ?);
+
+deleteHistory:
+DELETE FROM History WHERE path IS :path;
+
+deleteAllHistories:
+DELETE FROM History;
