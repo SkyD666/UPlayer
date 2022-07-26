@@ -1,5 +1,5 @@
 package ui
 
 enum class BodyContentType {
-    Home, Album, PlayList, History, MusicDetail
+    Home, SongList, PlayList, History, MusicDetail
 }

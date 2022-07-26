@@ -1,5 +1,6 @@
 package util
 
+import config.Config.currentPath
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -10,16 +11,16 @@ import javax.swing.JFileChooser
 import javax.swing.filechooser.FileFilter
 
 @Suppress("UsePropertyAccessSyntax")
-fun showOpenFileDialog(parent: Frame, filters: List<FileFilter>? = null): String? {
+fun openFileDialog(parent: Frame? = null, filters: List<FileFilter>? = null): String? {
     val scope = CoroutineScope(Dispatchers.IO)
-    val jFileChooser = JFileChooser()
+    val jFileChooser = JFileChooser(currentPath)
     if (!filters.isNullOrEmpty()) {
         scope.launch(Dispatchers.IO) {
             jFileChooser.removeChoosableFileFilter(jFileChooser.acceptAllFileFilter)
             filters.forEach { jFileChooser.addChoosableFileFilter(it) }
         }
     }
-    val returnVal: Int = jFileChooser.showSaveDialog(parent)
+    val returnVal: Int = jFileChooser.showOpenDialog(parent)
     if (returnVal == JFileChooser.APPROVE_OPTION) {
         return jFileChooser.getSelectedFile().path
     }

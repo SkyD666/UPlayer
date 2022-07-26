@@ -15,14 +15,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import player.Player
 import ui.BodyContentType
+import util.openFileDialog
 import util.OpenFileFilter
-import util.showOpenFileDialog
 
 @Composable
 fun SideBar(bodyContentType: MutableState<BodyContentType>) {
@@ -34,8 +33,8 @@ fun SideBar(bodyContentType: MutableState<BodyContentType>) {
             SideBarItem(icon = Icons.Rounded.Home, title = "首页") {
                 bodyContentType.value = BodyContentType.Home
             }
-            SideBarItem(icon = Icons.Rounded.Album, title = "专辑") {
-                bodyContentType.value = BodyContentType.Album
+            SideBarItem(icon = Icons.Rounded.Album, title = "歌单") {
+                bodyContentType.value = BodyContentType.SongList
             }
             SideBarItem(icon = Icons.Rounded.History, title = "播放历史") {
                 bodyContentType.value = BodyContentType.History
@@ -87,8 +86,7 @@ private fun MainMenu(expanded: Boolean, onDismissRequest: () -> Unit) {
             onClick = {
                 onDismissRequest()
                 scope.launch {
-                    showOpenFileDialog(
-                        parent = ComposeWindow(),
+                    openFileDialog(
                         filters = listOf(
                             OpenFileFilter("mp3;wav;m4a;flac", "音频文件"),
                             OpenFileFilter("mp3", "MP3文件"),

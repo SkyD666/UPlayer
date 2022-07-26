@@ -46,6 +46,10 @@ object Player {
         return player.media().prepare(mrl)
     }
 
+    fun release() {
+        player.release()
+    }
+
     fun pause() {
         player.controls().pause()
     }

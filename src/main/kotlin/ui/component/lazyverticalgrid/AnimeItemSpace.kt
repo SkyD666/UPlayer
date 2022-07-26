@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import bean.MusicCover1Bean
 import com.skyd.db.History
 
 object AnimeItemSpace {
@@ -137,6 +138,7 @@ object AnimeItemSpace {
 
     private val noHorizontalMarginType: Set<Class<*>> = setOf(
         History::class.java,
+        MusicCover1Bean::class.java,
     )
 
     fun noHorizontalMargin(clz: Class<*>?): Boolean {

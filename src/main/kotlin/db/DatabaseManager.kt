@@ -3,6 +3,7 @@ package db
 import com.skyd.db.AppDatabase
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
+import config.Config.currentPath
 import java.io.File
 
 object DatabaseManager {
@@ -20,7 +21,7 @@ object DatabaseManager {
     }
 
     val dbName = "AppDatabase.db"
-    val directory = File("").absoluteFile.path.let {
+    val directory = currentPath.let {
         if (it.endsWith("\\")) "${it}Database\\"
         else "$it/Database/"
     }
