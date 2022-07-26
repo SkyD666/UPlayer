@@ -9,9 +9,16 @@ import androidx.compose.ui.res.loadXmlImageVector
 import androidx.compose.ui.unit.Density
 import org.xml.sax.InputSource
 import java.io.File
+import java.net.URI
 import java.net.URL
 
 object ImageUtil {
+    fun loadImageBitmap(bytes: ByteArray): ImageBitmap =
+        bytes.inputStream().buffered().use(::loadImageBitmap)
+
+    fun loadImageBitmap(uri: URI): ImageBitmap =
+        File(uri).inputStream().buffered().use(::loadImageBitmap)
+
     /* Loading from file with java.io API */
     fun loadImageBitmap(file: File): ImageBitmap =
         file.inputStream().buffered().use(::loadImageBitmap)

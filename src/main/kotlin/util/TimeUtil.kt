@@ -3,12 +3,19 @@ package util
 import java.text.SimpleDateFormat
 import java.util.*
 
-fun Long.toTimeString(
+fun Long.toTimeString(): String {
+    val hh = String.format("%02d", this / 1000 / 60 / 60)
+    val mm = String.format("%02d", (this / 1000 / 60) % 60)
+    val ss = String.format("%02d", (this / 1000) % 60)
+    return if (hh != "00") "$hh:$mm:$ss" else "$mm:$ss"
+}
+
+fun Long.toDateString(
     pattern: String = "yyyy-MM-dd HH:mm:ss",
     locale: Locale = Locale.getDefault()
-): String = Date(this).toTimeString(pattern, locale)
+): String = Date(this).toDateString(pattern, locale)
 
-fun Date.toTimeString(
+fun Date.toDateString(
     pattern: String = "yyyy-MM-dd HH:mm:ss",
     locale: Locale = Locale.getDefault()
 ): String {

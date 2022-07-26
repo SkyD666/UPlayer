@@ -15,7 +15,7 @@ import java.io.IOException
 fun <T> AsyncImage(
     load: suspend () -> T,
     painterFor: @Composable (T) -> Painter,
-    contentDescription: String,
+    contentDescription: String? = null,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
 ) {

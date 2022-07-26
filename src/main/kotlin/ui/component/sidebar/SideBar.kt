@@ -90,14 +90,16 @@ private fun MainMenu(expanded: Boolean, onDismissRequest: () -> Unit) {
                     showOpenFileDialog(
                         parent = ComposeWindow(),
                         filters = listOf(
-                            OpenFileFilter("mp3;wav;m4a", "音频文件"),
-                            OpenFileFilter("mp3", "MP3音频文件"),
-                            OpenFileFilter("wav", "WAV音频文件"),
-                            OpenFileFilter("m4a", "M4A音频文件"),
+                            OpenFileFilter("mp3;wav;m4a;flac", "音频文件"),
+                            OpenFileFilter("mp3", "MP3文件"),
+                            OpenFileFilter("wav", "WAV文件"),
+                            OpenFileFilter("m4a", "M4A文件"),
+                            OpenFileFilter("flac", "FLAC文件"),
                         )
                     ).let {
                         if (!it.isNullOrBlank()) {
-                            Player.currentMedia = it
+                            Player.prepare(it)
+                            Player.play()
                         }
                     }
                 }

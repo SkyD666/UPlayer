@@ -37,10 +37,10 @@ import ui.component.TopBarIcon
 import ui.component.UPlayerTopBar
 import util.awaitEventFirstDown
 import util.time2Now
-import util.toTimeString
 import java.awt.event.MouseEvent
 
-private var historyList: List<History> by mutableStateOf(listOf())
+var historyList: List<History> by mutableStateOf(listOf())
+    private set
 
 fun updateHistoryListWithSort(list: List<History>) {
     historyList = list.sortedBy { -it.playTimestamp }
