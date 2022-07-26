@@ -1,43 +1,26 @@
 package ui.history
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.forEachGesture
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.awtEventOrNull
-import androidx.compose.ui.input.pointer.consumeDownChange
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
 import com.skyd.db.History
 import db.appDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import player.Player
 import ui.component.MessageDialog
 import ui.component.TopBarIcon
 import ui.component.UPlayerTopBar
-import util.awaitEventFirstDown
-import util.time2Now
-import java.awt.event.MouseEvent
+import ui.component.lazyverticalgrid.LazyGridAdapter
+import ui.component.lazyverticalgrid.UPlayerLazyVerticalGrid
+import ui.component.lazyverticalgrid.proxy.History1Proxy
 
 var historyList: List<History> by mutableStateOf(listOf())
     private set
@@ -59,7 +42,7 @@ fun HistoryScreen() {
             UPlayerTopBar(
                 title = {
                     Text(
-                        text = "历史记录",
+                        text = "播放历史",
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -79,11 +62,12 @@ fun HistoryScreen() {
             )
         }
     ) {
-        LazyColumn {
-            items(items = historyList) {
-                HistoryItem(it)
-            }
-        }
+        val adapter: LazyGridAdapter = remember { LazyGridAdapter(mutableListOf(History1Proxy())) }
+        UPlayerLazyVerticalGrid(
+            modifier = Modifier.fillMaxWidth(),
+            dataList = historyList,
+            adapter = adapter
+        )
     }
     if (showWarningDeleteDialog) {
         MessageDialog(
@@ -101,90 +85,5 @@ fun HistoryScreen() {
             },
             onDismissRequest = {}
         )
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun HistoryItem(history: History) {
-    val scope = rememberCoroutineScope()
-    var lastEvent by remember { mutableStateOf<MouseEvent?>(null) }
-    var expandedMenu by remember { mutableStateOf(false) }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .pointerInput(Unit) {
-                forEachGesture {
-                    awaitPointerEventScope {
-                        lastEvent = awaitEventFirstDown().apply {
-                            changes.forEach { it.consumeDownChange() }
-                        }.awtEventOrNull
-                        if (lastEvent?.button == MouseEvent.BUTTON3) {
-                            expandedMenu = true
-                        }
-                    }
-                }
-            }
-            .combinedClickable(
-                onClick = {},
-                onDoubleClick = {
-                    scope.launch {
-                        Player.prepare(history.path)
-                        Player.play()
-                    }
-                },
-            )
-            .padding(horizontal = 16.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        HistoryItemMenu(
-            history = history,
-            expanded = expandedMenu,
-            onDismissRequest = { expandedMenu = false }
-        )
-        Text(
-            modifier = Modifier.weight(1f),
-            text = history.path,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            modifier = Modifier.padding(start = 10.dp),
-            text = history.playTimestamp.time2Now(),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.secondary
-        )
-    }
-}
-
-@Composable
-private fun HistoryItemMenu(history: History, expanded: Boolean, onDismissRequest: () -> Unit) {
-    val scope = rememberCoroutineScope()
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = onDismissRequest
-    ) {
-        DropdownMenuItem(
-            onClick = {
-                onDismissRequest()
-                scope.launch(Dispatchers.IO) {
-                    appDatabase.historyQueries.deleteHistory(path = history.path)
-                    updateHistoryListWithSort(
-                        appDatabase.historyQueries.getAllHistory().executeAsList()
-                    )
-                }
-            },
-        ) {
-            Row {
-                Icon(
-                    imageVector = Icons.Rounded.DeleteOutline,
-                    contentDescription = null
-                )
-                androidx.compose.material3.Text(
-                    modifier = Modifier.padding(start = 6.dp),
-                    text = "删除"
-                )
-            }
-        }
     }
 }

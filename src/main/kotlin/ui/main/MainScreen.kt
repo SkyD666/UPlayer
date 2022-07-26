@@ -1,18 +1,16 @@
 package ui.main
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import ui.BodyContentType
 import ui.component.controller.MusicController
 import ui.component.sidebar.SideBar
 import ui.history.HistoryScreen
+import ui.playlist.PlayListScreen
 
 @Composable
 fun MainScreen() {
@@ -41,6 +39,7 @@ fun BodyContent(bodyContentType: BodyContentType, modifier: Modifier = Modifier)
     ) {
         when (it) {
             BodyContentType.History -> HistoryScreen()
+            BodyContentType.PlayList -> PlayListScreen()
         }
     }
 }

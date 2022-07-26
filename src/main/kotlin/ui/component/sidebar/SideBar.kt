@@ -8,10 +8,7 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.InsertDriveFile
-import androidx.compose.material.icons.rounded.Album
-import androidx.compose.material.icons.rounded.History
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -43,6 +40,9 @@ fun SideBar(bodyContentType: MutableState<BodyContentType>) {
             SideBarItem(icon = Icons.Rounded.History, title = "播放历史") {
                 bodyContentType.value = BodyContentType.History
             }
+        }
+        SideBarItem(icon = Icons.Rounded.QueueMusic, title = "播放列表") {
+            bodyContentType.value = BodyContentType.PlayList
         }
         SideBarItem(icon = Icons.Rounded.Menu, title = "菜单") {
             expandedMenu = !expandedMenu

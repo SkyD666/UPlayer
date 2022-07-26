@@ -3,6 +3,7 @@ package player
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import bean.MusicCover1Bean
 import db.appDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,7 @@ object Player {
 
     var switchMusicProxy: SwitchMusicProxy by mutableStateOf(SwitchMusicProxy.Once)
 
-    var musicList: MutableList<String> = mutableListOf()
+    var musicList: MutableList<MusicCover1Bean> = mutableListOf()
 
     var musicIndex: Int = 0
 
@@ -41,7 +42,7 @@ object Player {
             path = mrl
         )
         updateHistoryListWithSort(appDatabase.historyQueries.getAllHistory().executeAsList())
-        musicList.forEachIndexed { index, s -> if (s == mrl) musicIndex = index }
+        musicList.forEachIndexed { index, s -> if (s.path == mrl) musicIndex = index }
         return player.media().prepare(mrl)
     }
 
@@ -61,7 +62,7 @@ object Player {
         if (musicList.isEmpty()) return
         scope.launch {
             musicIndex = (musicIndex - 1) % musicList.size
-            prepare(musicList[musicIndex])
+            prepare(musicList[musicIndex].path)
             play()
         }
     }
@@ -70,7 +71,7 @@ object Player {
         if (musicList.isEmpty()) return
         scope.launch {
             musicIndex = max(musicIndex - 1, 0)
-            prepare(musicList[musicIndex])
+            prepare(musicList[musicIndex].path)
             play()
         }
     }
@@ -79,7 +80,7 @@ object Player {
         if (musicList.isEmpty()) return
         scope.launch {
             musicIndex = min(musicIndex + 1, musicList.size - 1)
-            prepare(musicList[musicIndex])
+            prepare(musicList[musicIndex].path)
             play()
         }
     }
@@ -88,7 +89,7 @@ object Player {
         if (musicList.isEmpty()) return
         scope.launch {
             musicIndex = (musicIndex + 1) % musicList.size
-            prepare(musicList[musicIndex])
+            prepare(musicList[musicIndex].path)
             play()
         }
     }
@@ -159,10 +160,10 @@ object Player {
 
     init {
         musicList = appDatabase.historyQueries.getAllHistory().executeAsList()
-            .sortedBy { -it.playTimestamp }.map { it.path }.toMutableList()
+            .sortedBy { -it.playTimestamp }.map { MusicCover1Bean(path = it.path) }.toMutableList()
 
         if (musicList.isNotEmpty()) {
-            scope.launch { prepare(musicList[0]) }
+            scope.launch { prepare(musicList[0].path) }
         }
 
         player.events().addMediaPlayerEventListener(object : MediaPlayerEventAdapter() {
@@ -178,7 +179,7 @@ object Player {
                 when (switchMusicProxy) {
                     SwitchMusicProxy.Once -> {}
                     SwitchMusicProxy.RepeatOne -> scope.launch {
-                        prepare(musicList[musicIndex])
+                        prepare(musicList[musicIndex].path)
                         play()
                     }
                     SwitchMusicProxy.Next -> next()
